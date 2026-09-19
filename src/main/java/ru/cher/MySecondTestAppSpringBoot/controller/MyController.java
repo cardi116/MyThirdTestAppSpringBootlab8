@@ -17,6 +17,7 @@ import ru.cher.MySecondTestAppSpringBoot.model.ErrorCodes;
 import ru.cher.MySecondTestAppSpringBoot.model.ErrorMessages;
 import ru.cher.MySecondTestAppSpringBoot.model.Request;
 import ru.cher.MySecondTestAppSpringBoot.model.Response;
+import ru.cher.MySecondTestAppSpringBoot.service.ModifyRequestService;
 import ru.cher.MySecondTestAppSpringBoot.service.ModifyResponseService;
 import ru.cher.MySecondTestAppSpringBoot.service.ValidationService;
 import ru.cher.MySecondTestAppSpringBoot.util.DateTimeUtil;
@@ -29,12 +30,15 @@ public class MyController {
 
     private final ValidationService validationService;
     private final ModifyResponseService modifyResponseService;
+    private final ModifyRequestService modifyRequestService;
 
     @Autowired
     public MyController(ValidationService validationService,
-                        @Qualifier("ModifySystemTimeResponseService") ModifyResponseService modifyResponseService) {
+                        @Qualifier("ModifySystemTimeResponseService") ModifyResponseService modifyResponseService,
+                        @Qualifier("ModifySourceRequestService") ModifyRequestService modifyRequestService) {
         this.validationService = validationService;
         this.modifyResponseService = modifyResponseService;
+        this.modifyRequestService = modifyRequestService;
     }
 
     @PostMapping(value = "/feedback")
@@ -82,6 +86,8 @@ public class MyController {
 
         Response modifiedResponse = modifyResponseService.modify(response);
         log.info("Response modified by service: {}", modifiedResponse);
+
+        modifyRequestService.modify(request);
 
         return new ResponseEntity<>(modifiedResponse, HttpStatus.OK);
     }
