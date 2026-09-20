@@ -15,41 +15,75 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Request {
 
-    @NotBlank(message = "uid не может быть пустым")
-    @Size(max = 32, message = "uid не должен превышать 32 символа")
+    /**
+     * Уникальный идентификатор сообщения
+     */
+    @NotBlank(message = "UID не может быть пустым")
+    @Size(max = 32, message = "UID должен содержать не более 32 символов")
     private String uid;
 
-    @NotBlank(message = "operationUid не может быть пустым")
-    @Size(max = 32, message = "operationUid не должен превышать 32 символа")
+    /**
+     * Уникальный идентификатор операции
+     */
+    @NotBlank(message = "Operation UID не может быть пустым")
+    @Size(max = 32, message = "Operation UID должен содержать не более 32 символов")
     private String operationUid;
 
-    private Systems systemName; // Заменено с String на enum Systems
+    /**
+     * Имя системы-источника
+     */
+    private Systems systemName;
 
-    @NotBlank(message = "systemTime не может быть пустым")
+    /**
+     * Время отправки сообщения
+     */
+    @NotBlank(message = "System Time не может быть пустым")
     private String systemTime;
 
+    /**
+     * Источник запроса
+     */
     private String source;
 
-    @Min(value = 1, message = "communicationId должен быть не менее 1")
-    @Max(value = 100000, message = "communicationId должен быть не более 100000")
-    private int communicationId;
+    /**
+     * Должность сотрудника
+     */
+    private Positions position;
 
+    /**
+     * Заработная плата сотрудника
+     */
+    private Double salary;
+
+    /**
+     * Коэффициент бонуса
+     */
+    private Double bonus;
+
+    /**
+     * Количество отработанных дней
+     */
+    private Integer workDays;
+
+    /**
+     * Идентификатор коммуникации
+     */
+    @Min(value = 1, message = "Communication ID должен быть от 1 до 2147483647")
+    @Max(value = 2147483647, message = "Communication ID должен быть от 1 до 2147483647")
+    private Integer communicationId;
+
+    /**
+     * Идентификатор шаблона
+     */
     private Integer templateId;
-    private Integer productCode;
-    private Integer smsCode;
 
-    @Override
-    public String toString() {
-        return "{" +
-                "uid='" + uid + '\'' +
-                ", operationUid='" + operationUid + '\'' +
-                ", systemName='" + systemName + '\'' +
-                ", systemTime='" + systemTime + '\'' +
-                ", source='" + source + '\'' +
-                ", communicationId=" + communicationId +
-                ", templateId=" + templateId +
-                ", productCode=" + productCode +
-                ", smsCode=" + smsCode +
-                '}';
-    }
+    /**
+     * Код продукта
+     */
+    private Integer productCode;
+
+    /**
+     * СМС-код для подтверждения
+     */
+    private Integer smsCode;
 }

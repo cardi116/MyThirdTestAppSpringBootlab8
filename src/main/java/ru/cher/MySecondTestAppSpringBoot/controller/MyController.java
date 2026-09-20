@@ -1,24 +1,17 @@
 package ru.cher.MySecondTestAppSpringBoot.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ru.cher.MySecondTestAppSpringBoot.exception.UnsupportedCodeException;
 import ru.cher.MySecondTestAppSpringBoot.exception.ValidationFailedException;
-import ru.cher.MySecondTestAppSpringBoot.model.Codes;
-import ru.cher.MySecondTestAppSpringBoot.model.ErrorCodes;
-import ru.cher.MySecondTestAppSpringBoot.model.ErrorMessages;
-import ru.cher.MySecondTestAppSpringBoot.model.Request;
-import ru.cher.MySecondTestAppSpringBoot.model.Response;
-import ru.cher.MySecondTestAppSpringBoot.service.ModifyRequestService;
-import ru.cher.MySecondTestAppSpringBoot.service.ModifyResponseService;
+import ru.cher.MySecondTestAppSpringBoot.model.*;
+import ru.cher.MySecondTestAppSpringBoot.service.AnnualBonusService;
 import ru.cher.MySecondTestAppSpringBoot.service.ValidationService;
 import ru.cher.MySecondTestAppSpringBoot.util.DateTimeUtil;
 
@@ -26,26 +19,15 @@ import java.util.Date;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 public class MyController {
 
     private final ValidationService validationService;
-    private final ModifyResponseService modifyResponseService;
-    private final ModifyRequestService modifyRequestService;
-
-    @Autowired
-    public MyController(ValidationService validationService,
-                        @Qualifier("ModifySystemTimeResponseService") ModifyResponseService modifyResponseService,
-                        @Qualifier("ModifySourceRequestService") ModifyRequestService modifyRequestService) {
-        this.validationService = validationService;
-        this.modifyResponseService = modifyResponseService;
-        this.modifyRequestService = modifyRequestService;
-    }
+    private final AnnualBonusService annualBonusService;
 
     @PostMapping(value = "/feedback")
-    public ResponseEntity<Response> feedback(@Valid @RequestBody Request request,
-                                             BindingResult bindingResult) {
-
-        log.info("Received request: {}", request);
+    public ResponseEntity<Response> feedback(@Valid @RequestBody Request request, BindingResult bindingResult) {
+        log.info("request: {}", request);
 
         Response response = Response.builder()
                 .uid(request.getUid())
@@ -56,39 +38,34 @@ public class MyController {
                 .errorMessage(ErrorMessages.EMPTY)
                 .build();
 
-        log.info("Initial response created: {}", response);
-
         try {
             validationService.isValid(bindingResult);
-            validationService.isCodeSupported(request.getUid());
         } catch (ValidationFailedException e) {
-            log.error("Handling ValidationFailedException: {}", e.getMessage());
             response.setCode(Codes.FAILED);
             response.setErrorCode(ErrorCodes.VALIDATION_EXCEPTION);
             response.setErrorMessage(ErrorMessages.VALIDATION);
-            log.info("Response updated after validation failure: {}", response);
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        } catch (UnsupportedCodeException e) {
-            log.error("Handling UnsupportedCodeException: {}", e.getMessage());
-            response.setCode(Codes.FAILED);
-            response.setErrorCode(ErrorCodes.UNSUPPORTED_EXCEPTION);
-            response.setErrorMessage(ErrorMessages.UNSUPPORTED);
-            log.info("Response updated after unsupported code error: {}", response);
+            log.error("Validation error: {}", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            log.error("Handling unexpected exception: ", e);
             response.setCode(Codes.FAILED);
             response.setErrorCode(ErrorCodes.UNKNOWN_EXCEPTION);
             response.setErrorMessage(ErrorMessages.UNKNOWN);
-            log.info("Response updated after unknown error: {}", response);
+            log.error("Unknown error: {}", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        Response modifiedResponse = modifyResponseService.modify(response);
-        log.info("Response modified by service: {}", modifiedResponse);
+        if (request.getPosition() != null && request.getSalary() != null
+                && request.getBonus() != null && request.getWorkDays() != null) {
+            double bonus = annualBonusService.calculate(
+                    request.getPosition(),
+                    request.getSalary(),
+                    request.getBonus(),
+                    request.getWorkDays()
+            );
+            response.setAnnualBonus(bonus);
+        }
 
-        modifyRequestService.modify(request);
-
-        return new ResponseEntity<>(modifiedResponse, HttpStatus.OK);
+        log.info("response: {}", response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
