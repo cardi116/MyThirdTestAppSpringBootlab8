@@ -1,15 +1,21 @@
-
 package ru.cher.MySecondTestAppSpringBoot;
-
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.sql.SQLException;
+
 @SpringBootApplication
-public class    MySecondTestAppSpringBootApplication {
+public class MySecondTestAppSpringBootApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MySecondTestAppSpringBootApplication.class, args);
-	}
+    public static void main(String[] args) {
+        // Поднимаем веб-сервер H2 на отдельном порту 8083
+        try {
+            org.h2.tools.Server.createWebServer("-web", "-webAllowOthers", "-webPort", "8083").start();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
+        SpringApplication.run(MySecondTestAppSpringBootApplication.class, args);
+    }
 }

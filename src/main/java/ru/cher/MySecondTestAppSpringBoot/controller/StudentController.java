@@ -1,9 +1,7 @@
 package ru.cher.MySecondTestAppSpringBoot.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.cher.MySecondTestAppSpringBoot.dto.ApiResponse;
 import ru.cher.MySecondTestAppSpringBoot.entity.Student;
 import ru.cher.MySecondTestAppSpringBoot.service.StudentService;
 
@@ -21,38 +19,27 @@ public class StudentController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Student>>> getAllStudents() {
-        List<Student> students = studentService.getAllStudents();
-        return ResponseEntity.ok(ApiResponse.ok("Студенты успешно получены", students));
+    public List<Student> getAllStudents() {
+        return studentService.getAllStudents();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Student>> getStudent(@PathVariable("id") int id) {
-        Student student = studentService.getStudent(id);
-        if (student != null) {
-            return ResponseEntity.ok(ApiResponse.ok("Студент найден", student));
-        }
-        return ResponseEntity.status(404).body(ApiResponse.error("Студент с id=" + id + " не найден"));
+    public Student getStudent(@PathVariable("id") int id) {
+        return studentService.getStudent(id);
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Student>> saveStudent(@RequestBody Student student) {
-        Student saved = studentService.saveStudent(student);
-        return ResponseEntity.ok(ApiResponse.ok("Студент успешно сохранен", saved));
+    public Student saveStudent(@RequestBody Student student) {
+        return studentService.saveStudent(student);
     }
 
     @PutMapping
-    public ResponseEntity<ApiResponse<Student>> updateStudent(@RequestBody Student student) {
-        Student updated = studentService.saveStudent(student);
-        return ResponseEntity.ok(ApiResponse.ok("Данные студента успешно обновлены", updated));
+    public Student updateStudent(@RequestBody Student student) {
+        return studentService.saveStudent(student);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteStudent(@PathVariable("id") int id) {
-        boolean deleted = studentService.deleteStudent(id);
-        if (deleted) {
-            return ResponseEntity.ok(ApiResponse.ok("Студент успешно удален", null));
-        }
-        return ResponseEntity.status(404).body(ApiResponse.error("Студент с id=" + id + " не найден"));
+    public void deleteStudent(@PathVariable("id") int id) {
+        studentService.deleteStudent(id);
     }
 }
