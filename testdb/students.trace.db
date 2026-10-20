@@ -6,3 +6,21 @@ ID [42001-250]
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Синтаксическая ошибка в выражении SQL "[*]ID DISCIPLINES"; ожидалось "INSERT"
 Syntax error in SQL statement "[*]ID DISCIPLINES"; expected "INSERT"; SQL statement:
 ID DISCIPLINES [42001-250]
+2026-10-18 15:53:12.225776+05:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Синтаксическая ошибка в выражении SQL "[*]ID"; ожидалось "INSERT"
+Syntax error in SQL statement "[*]ID"; expected "INSERT"; SQL statement:
+ID [42001-252]
+2026-10-18 16:10:05.774637+05:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Синтаксическая ошибка в выражении SQL "[*]seletch +users"; ожидалось "SAVEPOINT, SCRIPT, SHUTDOWN"
+Syntax error in SQL statement "[*]seletch +users"; expected "SAVEPOINT, SCRIPT, SHUTDOWN"; SQL statement:
+seletch +users [42001-252]
+2026-10-18 16:10:15.065850+05:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Синтаксическая ошибка в выражении SQL "[*]seletch +users\000d\000aID"; ожидалось "SAVEPOINT, SCRIPT, SHUTDOWN"
+Syntax error in SQL statement "[*]seletch +users\000d\000aID"; expected "SAVEPOINT, SCRIPT, SHUTDOWN"; SQL statement:
+seletch +users
+ID [42001-252]
+2026-10-18 16:10:15.887320+05:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Синтаксическая ошибка в выражении SQL "[*]seletch +users\000d\000aID"; ожидалось "SAVEPOINT, SCRIPT, SHUTDOWN"
+Syntax error in SQL statement "[*]seletch +users\000d\000aID"; expected "SAVEPOINT, SCRIPT, SHUTDOWN"; SQL statement:
+seletch +users
+ID [42001-252]

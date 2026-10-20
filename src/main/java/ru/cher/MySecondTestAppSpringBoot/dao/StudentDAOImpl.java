@@ -1,43 +1,50 @@
 package ru.cher.MySecondTestAppSpringBoot.dao;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.cher.MySecondTestAppSpringBoot.entity.Student;
 
 import java.util.List;
 
-@Slf4j
 @Repository
 public class StudentDAOImpl implements StudentDAO {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private static final Logger log = LoggerFactory.getLogger(StudentDAOImpl.class);
+
+    private final EntityManager entityManager;
+
+    @Autowired
+    public StudentDAOImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     @Override
     public List<Student> getAllStudents() {
-        Query query = entityManager.createQuery("from Student", Student.class);
-        List<Student> allStudents = query.getResultList();
-        log.info("getAllStudents: {}", allStudents);
-        return allStudents;
+        log.info("Getting all students from database");
+        return entityManager.createQuery("from Student", Student.class).getResultList();
     }
 
     @Override
     public Student saveStudent(Student student) {
+        log.info("Saving student to database: {}", student);
         return entityManager.merge(student);
     }
 
     @Override
     public Student getStudent(int id) {
+        log.info("Getting student with id: {}", id);
         return entityManager.find(Student.class, id);
     }
 
     @Override
     public void deleteStudent(int id) {
-        Query query = entityManager.createQuery("delete from Student where id = :studentId");
-        query.setParameter("studentId", id);
-        query.executeUpdate();
+        log.info("Deleting student with id: {}", id);
+        Student student = entityManager.find(Student.class, id);
+        if (student != null) {
+            entityManager.remove(student);
+        }
     }
 }

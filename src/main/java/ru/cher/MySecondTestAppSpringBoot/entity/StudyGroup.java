@@ -1,14 +1,8 @@
 package ru.cher.MySecondTestAppSpringBoot.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "STUDY_GROUPS")
 public class StudyGroup {
 
@@ -22,6 +16,36 @@ public class StudyGroup {
     @Column(name = "faculty")
     private String faculty;
 
-    @Column(name = "students_count")
-    private Integer studentsCount;
+    public StudyGroup() {
+    }
+
+    public StudyGroup(Long id, String name, String faculty) {
+        this.id = id;
+        this.name = name;
+        this.faculty = faculty;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(String faculty) {
+        this.faculty = faculty;
+    }
 }
